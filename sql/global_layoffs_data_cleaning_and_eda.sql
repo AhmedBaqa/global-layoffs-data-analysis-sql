@@ -41,11 +41,11 @@ CREATE TABLE `layoffs_staging2` (
   `location` text,
   `industry` text,
   `total_laid_off` int DEFAULT NULL,
-  `percentage_laid_off` text,
+  `percentage_laid_off` `percentage_laid_off` decimal(4,2) DEFAULT NULL,
   `date` text,
   `stage` text,
   `country` text,
-  `funds_raised_millions` int DEFAULT NULL,
+  `funds_raised_millions` decimal(10,2) DEFAULT NULL,
   `Row_Number` Int
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -182,7 +182,7 @@ FROM layoffs_staging2
 WHERE percentage_laid_off = 1
   AND YEAR(`date`) BETWEEN 2020 AND 2021
 GROUP BY industry
-ORDER BY count_of_companies DESC;
+ORDER BY Num_of_companies DESC;
 
 Select *
 From layoffs_staging2
@@ -239,9 +239,9 @@ Group By `Year`
 Order By 1 ASC;
 
 -- Top 5 Companies with Highest Lay offs Each Year (2020-2023)
-WITH Company_Year (company, years, total_laid_off) AS
+WITH Company_Year AS
 (
-Select company, Year(`date`), SUM(total_laid_off)
+Select company, Year(`date`) AS years, SUM(total_laid_off) AS total_laid_off
 From layoffs_staging2
 Group By company, Year(`date`)
 ),Company_Year_Rank AS (
@@ -252,7 +252,6 @@ Where years IS NOT NULL AND total_laid_off IS NOT NULL
 Select* 
 From Company_Year_Rank
 Where Ranking <= 5
-
 ;
 
 
